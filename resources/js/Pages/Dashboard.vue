@@ -1,6 +1,6 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, router } from '@inertiajs/vue3';
+import { Head, router, usePoll } from '@inertiajs/vue3';
 import { ref, watch, computed } from 'vue';
 import { debounce } from 'lodash';
 
@@ -58,6 +58,10 @@ watch(statusFilter, (value) => {
 });
 
 
+usePoll(1000, {
+
+})
+
 
 </script>
 
@@ -111,38 +115,69 @@ watch(statusFilter, (value) => {
                     </div>
                 </div>
 
+                <!-- Currently Serving Card -->
+                <div v-if="nextQueueNumber" class="mb-6">
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-lg shadow">
+                        <h3 class="text-lg font-semibold text-blue-800 mb-2">Currently Serving</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div class="bg-white p-4 rounded-lg shadow-sm">
+                                <p class="text-sm text-gray-500">Queue Number</p>
+                                <p class="text-2xl font-bold text-blue-600">
+                                    {{ nextQueueNumber }}
+                                </p>
+                            </div>
+                            <div class="bg-white p-4 rounded-lg shadow-sm">
+                                <p class="text-sm text-gray-500">Customer</p>
+                                <p class="text-lg font-medium">
+                                    {{queues.find(q => q.queue_number === nextQueueNumber)?.user.name || 'N/A'}}
+                                </p>
+                            </div>
+                            <div class="bg-white p-4 rounded-lg shadow-sm">
+                                <p class="text-sm text-gray-500">Status</p>
+                                <span class="px-2 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded-full">
+                                    Pending (Current)
+                                </span>
+                            </div>
+                            <div class="bg-white p-4 rounded-lg shadow-sm flex items-center">
+                                <button @click="completeQueue(queues.find(q => q.queue_number === nextQueueNumber)?.id)"
+                                    class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded mr-2">
+                                    Complete
+                                </button>
+                                <button @click="cancelQueue(queues.find(q => q.queue_number === nextQueueNumber)?.id)"
+                                    class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded">
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Queues Table -->
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    <th scope="col"
+                                    <th
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Queue #
-                                    </th>
-                                    <th scope="col"
+                                        Queue #</th>
+                                    <th
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        User
-                                    </th>
-                                    <th scope="col"
+                                        User</th>
+                                    <th
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Status
-                                    </th>
-                                    <th scope="col"
+                                        Status</th>
+                                    <th
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Actions
-                                    </th>
-                                    <th scope="col"
+                                        Added</th>
+                                    <!-- <th
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Added
-                                    </th>
+                                        Actions</th> -->
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
-                                <tr v-for="queue in queues" :key="queue.id" :class="{
-                                    'bg-blue-50': isNextQueue(queue)
-                                }">
+                                <tr v-for="queue in queues.filter(q => q.queue_number !== nextQueueNumber)"
+                                    :key="queue.id" class="hover:bg-gray-50">
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm font-medium text-gray-900">{{ queue.queue_number }}</div>
                                     </td>
@@ -156,14 +191,12 @@ watch(statusFilter, (value) => {
                                             'bg-red-100 text-red-800': queue.status === 'canceled'
                                         }" class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full">
                                             {{ queue.status }}
-                                            <span
-                                                v-if="queue.status === 'pending' && queue.queue_number === nextQueueNumber"
-                                                class="ml-1">
-                                                (Next)
-                                            </span>
                                         </span>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        {{ new Date(queue.created_at).toLocaleTimeString() }}
+                                    </td>
+                                    <!-- <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <button v-if="queue.status === 'pending'" @click="completeQueue(queue.id)"
                                             class="text-green-600 hover:text-green-900 mr-4">
                                             Complete
@@ -172,15 +205,12 @@ watch(statusFilter, (value) => {
                                             class="text-red-600 hover:text-red-900">
                                             Cancel
                                         </button>
-                                        <span v-else class="text-gray-400">No actions available</span>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        {{ new Date(queue.created_at).toLocaleTimeString() }}
-                                    </td>
+                                        <span v-else class="text-gray-400">No actions</span>
+                                    </td> -->
                                 </tr>
-                                <tr v-if="queues.length === 0">
+                                <tr v-if="queues.filter(q => q.queue_number !== nextQueueNumber).length === 0">
                                     <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500">
-                                        No queues found.
+                                        No other queues found.
                                     </td>
                                 </tr>
                             </tbody>

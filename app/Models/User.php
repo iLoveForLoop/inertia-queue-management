@@ -49,8 +49,14 @@ class User extends Authenticatable
         ];
     }
 
-    public function queue()
+    public function queues()
     {
-        return $this->hasOne(Queue::class);
+        return $this->hasMany(Queue::class)->latest();
     }
+
+    public function queue()
+{
+    return $this->hasOne(Queue::class)->latest();
+}
+
 }

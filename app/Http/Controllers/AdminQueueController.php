@@ -4,12 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Models\Queue;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class AdminQueueController extends Controller
 {
     public function index(Request $request)
     {
+
+        if(Auth::user()->hasRole('user')){
+            return redirect()->route('user');
+        }
+
         $query = Queue::with('user');
 
         if ($request->has('search')) {
@@ -33,16 +39,20 @@ class AdminQueueController extends Controller
 
         // Order queues with the next to be served (oldest pending) first,
         // then by queue number, and finally by update time
-        $queues = $query->orderByRaw("
-            CASE
-                WHEN status = 'pending' AND queue_number > ? THEN 0
-                WHEN status = 'pending' THEN 1
-                WHEN status = 'completed' THEN 2
-                ELSE 3
-            END
-        ", [$lastCompleted])
+        // $queues = $query->orderByRaw("
+        //     CASE
+        //         WHEN status = 'pending' AND queue_number > ? THEN 0
+        //         WHEN status = 'pending' THEN 1
+        //         WHEN status = 'completed' THEN 2
+        //         ELSE 3
+        //     END
+        // ", [$lastCompleted])
+        // ->orderBy('updated_at', 'desc')
+        // ->orderBy('queue_number')
+        // ->get();
+
+        $queues = $query->orderBy('updated_at', 'desc')
         ->orderBy('queue_number')
-        ->orderBy('updated_at', 'desc')
         ->get();
 
         $stats = [

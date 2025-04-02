@@ -40,14 +40,14 @@ class AuthenticatedSessionController extends Controller
             return redirect()->intended(route('dashboard'));
         }
 
-        if (!Queue::where('user_id', $user->id)->where('status', 'pending')->exists()) {
-            $queueNumber = Queue::max('queue_number') + 1;
+        // if (!Queue::where('user_id', $user->id)->where('status', 'pending')->exists()) {
+        //     $queueNumber = Queue::max('queue_number') + 1;
 
-            Queue::create([
-                'user_id' => $user->id,
-                'queue_number' => $queueNumber,
-            ]);
-        }
+        //     Queue::create([
+        //         'user_id' => $user->id,
+        //         'queue_number' => $queueNumber,
+        //     ]);
+        // }
 
 
 
