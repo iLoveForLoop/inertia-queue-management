@@ -1,7 +1,7 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, router, usePoll } from '@inertiajs/vue3';
-import { ref, watch, computed } from 'vue';
+import { Head, router } from '@inertiajs/vue3';
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
 import { debounce } from 'lodash';
 
 const props = defineProps({
@@ -10,59 +10,104 @@ const props = defineProps({
     filters: Object,
 });
 
+// Reactive state
 const search = ref(props.filters.search || '');
 const statusFilter = ref(props.filters.status || 'all');
+const isPollingActive = ref(true);
+const pollingInterval = ref(null);
 
+// Computed properties
 const nextQueueNumber = computed(() => {
     const pendingQueues = props.queues.filter(q => q.status === 'pending');
     return pendingQueues.length ? Math.min(...pendingQueues.map(q => q.queue_number)) : null;
 });
 
-const isNextQueue = (queue) => {
-    return queue.status === 'pending' && queue.queue_number === nextQueueNumber.value;
-};
+// Methods
+const refreshData = () => {
+    if (!isPollingActive.value) return;
 
-
-const completeQueue = async (queueId) => {
-    await router.patch(route('admin.queue.complete', queueId), {}, {
+    router.reload({
+        only: ['queues', 'stats'],
+        preserveState: true,
         preserveScroll: true,
-        onSuccess: () => {
-            // Refresh the page to get updated queue order
-            router.reload({ only: ['queues', 'stats'] });
+        onFinish: () => {
+            // Optional: Add any post-refresh logic
         }
     });
 };
 
-const cancelQueue = async (queueId) => {
-    await router.patch(route('admin.queue.cancel', queueId), {}, {
-        preserveScroll: true,
-        onSuccess: () => {
-            // Refresh the page to get updated queue order
-            router.reload({ only: ['queues', 'stats'] });
-        }
-    });
+const startPolling = () => {
+    stopPolling(); // Clear any existing interval
+    pollingInterval.value = setInterval(refreshData, 1000);
 };
 
+const stopPolling = () => {
+    if (pollingInterval.value) {
+        clearInterval(pollingInterval.value);
+        pollingInterval.value = null;
+    }
+};
+
+const pausePolling = () => {
+    isPollingActive.value = false;
+    stopPolling();
+};
+
+const resumePolling = () => {
+    isPollingActive.value = true;
+    startPolling();
+};
+
+// Watchers
 watch(search, debounce((value) => {
+    pausePolling();
     router.get(route('dashboard'), { search: value, status: statusFilter.value }, {
         preserveState: true,
         replace: true,
+        onFinish: resumePolling
     });
 }, 300));
 
 watch(statusFilter, (value) => {
+    pausePolling();
     router.get(route('dashboard'), { status: value, search: search.value }, {
         preserveState: true,
         replace: true,
+        onFinish: resumePolling
     });
 });
 
+// Component lifecycle
+onMounted(() => {
+    startPolling();
+});
 
-usePoll(1000, {
+onUnmounted(() => {
+    stopPolling();
+});
 
-})
+// Queue actions
+const completeQueue = async (queueId) => {
+    pausePolling();
+    await router.patch(route('admin.queue.complete', queueId), {}, {
+        preserveScroll: true,
+        onSuccess: () => {
+            refreshData();
+        },
+        onFinish: resumePolling
+    });
+};
 
-
+const cancelQueue = async (queueId) => {
+    pausePolling();
+    await router.patch(route('admin.queue.cancel', queueId), {}, {
+        preserveScroll: true,
+        onSuccess: () => {
+            refreshData();
+        },
+        onFinish: resumePolling
+    });
+};
 </script>
 
 <template>
@@ -71,7 +116,7 @@ usePoll(1000, {
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Queue Management</h2>
+            <h2 class="font-semibold text-xl text-indigo-600 leading-tight">MediQueue</h2>
         </template>
 
         <div class="py-6">
@@ -100,11 +145,12 @@ usePoll(1000, {
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6 p-4">
                     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                         <div class="w-full md:w-1/2">
-                            <input type="text" v-model="search" placeholder="Search queue number or user..."
+                            <input @focus="pausePolling" @blur="resumePolling" type="text" v-model="search"
+                                placeholder="Search queue number or user..."
                                 class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
                         </div>
                         <div class="w-full md:w-1/4">
-                            <select v-model="statusFilter"
+                            <select @focus="pausePolling" @blur="resumePolling" v-model="statusFilter"
                                 class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 <option value="all">All Statuses</option>
                                 <option value="pending">Pending</option>
