@@ -1,3 +1,3 @@
 <template>
-    <img src="/images/mediqueuelogo.png" alt="">
+    <img class="" src="/images/latestlogo.png" alt="">
 </template>

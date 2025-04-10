@@ -3,9 +3,10 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, router } from '@inertiajs/vue3';
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
 import { debounce } from 'lodash';
+import Pagination from '@/Components/Pagination.vue';
 
 const props = defineProps({
-    queues: Array,
+    queues: Object,
     stats: Object,
     filters: Object,
 });
@@ -18,7 +19,7 @@ const pollingInterval = ref(null);
 
 // Computed properties
 const nextQueueNumber = computed(() => {
-    const pendingQueues = props.queues.filter(q => q.status === 'pending');
+    const pendingQueues = props.queues?.data?.filter(q => q.status === 'pending') || [];
     return pendingQueues.length ? Math.min(...pendingQueues.map(q => q.queue_number)) : null;
 });
 
@@ -77,6 +78,20 @@ watch(statusFilter, (value) => {
     });
 });
 
+const isPaginating = ref(false);
+
+const onPaginating = () => {
+    isPaginating.value = true;
+    pausePolling();
+
+    // Resume after navigation completes
+    const unwatch = watch(() => props.queues, () => {
+        isPaginating.value = false;
+        resumePolling();
+        unwatch(); // Clean up the watcher
+    }, { deep: true });
+};
+
 // Component lifecycle
 onMounted(() => {
     startPolling();
@@ -115,9 +130,9 @@ const cancelQueue = async (queueId) => {
     <Head title="Dashboard" />
 
     <AuthenticatedLayout>
-        <template #header>
+        <!-- <template #header>
             <h2 class="font-semibold text-xl text-indigo-600 leading-tight">MediQueue</h2>
-        </template>
+        </template> -->
 
         <div class="py-6">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -175,7 +190,7 @@ const cancelQueue = async (queueId) => {
                             <div class="bg-white p-4 rounded-lg shadow-sm">
                                 <p class="text-sm text-gray-500">Customer</p>
                                 <p class="text-lg font-medium">
-                                    {{queues.find(q => q.queue_number === nextQueueNumber)?.user.name || 'N/A'}}
+                                    {{queues?.data.find(q => q.queue_number === nextQueueNumber)?.user.name || 'N/A'}}
                                 </p>
                             </div>
                             <div class="bg-white p-4 rounded-lg shadow-sm">
@@ -185,11 +200,13 @@ const cancelQueue = async (queueId) => {
                                 </span>
                             </div>
                             <div class="bg-white p-4 rounded-lg shadow-sm flex items-center">
-                                <button @click="completeQueue(queues.find(q => q.queue_number === nextQueueNumber)?.id)"
+                                <button
+                                    @click="completeQueue(queues?.data.find(q => q.queue_number === nextQueueNumber)?.id)"
                                     class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded mr-2">
                                     Complete
                                 </button>
-                                <button @click="cancelQueue(queues.find(q => q.queue_number === nextQueueNumber)?.id)"
+                                <button
+                                    @click="cancelQueue(queues?.data.find(q => q.queue_number === nextQueueNumber)?.id)"
                                     class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded">
                                     Cancel
                                 </button>
@@ -222,7 +239,7 @@ const cancelQueue = async (queueId) => {
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
-                                <tr v-for="queue in queues.filter(q => q.queue_number !== nextQueueNumber)"
+                                <tr v-for="queue in queues?.data.filter(q => q.queue_number !== nextQueueNumber)"
                                     :key="queue.id" class="hover:bg-gray-50">
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm font-medium text-gray-900">{{ queue.queue_number }}</div>
@@ -254,13 +271,16 @@ const cancelQueue = async (queueId) => {
                                         <span v-else class="text-gray-400">No actions</span>
                                     </td> -->
                                 </tr>
-                                <tr v-if="queues.filter(q => q.queue_number !== nextQueueNumber).length === 0">
+                                <tr v-if="queues?.data.filter(q => q.queue_number !== nextQueueNumber).length === 0">
                                     <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500">
                                         No other queues found.
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
+                        <div class="px-6 py-4 border-t border-gray-200">
+                            <Pagination :links="queues.links" @paginating="onPaginating" />
+                        </div>
                     </div>
                 </div>
             </div>

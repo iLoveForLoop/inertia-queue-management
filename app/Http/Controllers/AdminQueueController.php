@@ -53,7 +53,7 @@ class AdminQueueController extends Controller
 
         $queues = $query->orderBy('updated_at', 'desc')
         ->orderBy('queue_number')
-        ->get();
+        ->paginate(5);
 
         $stats = [
             'pending' => Queue::where('status', 'pending')->count(),
