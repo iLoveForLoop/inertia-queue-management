@@ -54,14 +54,13 @@ const positionInQueue = computed(() => {
 });
 
 const progressWidth = computed(() => {
-    if (!props.user.queue || props.user.queue.status !== 'pending') return '5%';
-    if (props.isCurrentlyServing) return '100%';
+    if (!props.user.queue || props.user.queue.status !== 'pending') return '5%'; // not in queue
+    if (props.isCurrentlyServing) return '100%'; // being served now
 
-    const totalQueues = props.user.queue.queue_number - props.currentlyServing;
-    if (totalQueues <= 0) return '5%';
+    const currentPosition = props.queuesAhead + 1; // e.g., if 2 ahead of you, you're 3rd
+    const percentage = (1 / currentPosition) * 100; // closer to 1st = higher %
 
-    const percentage = 100 - (props.queuesAhead / totalQueues) * 100;
-    return `${Math.max(5, percentage)}%`;
+    return `${Math.max(5, percentage.toFixed(2))}%`; // minimum visible bar width
 });
 
 const requestNewQueue = () => {
@@ -98,8 +97,12 @@ usePoll(1000, {
                 </div>
 
                 <!-- Queue Status Card -->
-                <div v-if="user.queue"
-                    class="bg-white rounded-xl shadow-lg overflow-hidden transition-all hover:shadow-xl">
+                <div v-if="user.queue" class="rounded-xl shadow-lg overflow-hidden transition-all hover:shadow-xl"
+                    :class="{
+                        'bg-yellow-400 bg-opacity-5': user.queue.status === 'pending',
+                        'bg-green-500 bg-opacity-5': user.queue.status === 'completed',
+                        'bg-red-500 bg-opacity-5': user.queue.status === 'canceled',
+                    }">
                     <!-- Status Bar -->
                     <div class="h-2" :class="{
                         'bg-yellow-400': user.queue.status === 'pending',
@@ -107,7 +110,7 @@ usePoll(1000, {
                         'bg-red-500': user.queue.status === 'canceled',
                     }"></div>
 
-                    <div v-if="user.queue && user.queue.status !== 'pending'" class="text-center mt-6">
+                    <div v-if="user.queue && user.queue.status !== 'pending'" class="text-center mt-6 ">
                         <button @click="requestNewQueue"
                             class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg shadow-md transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50"
                             :disabled="form.processing">

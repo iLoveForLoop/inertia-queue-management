@@ -138,19 +138,23 @@ const cancelQueue = async (queueId) => {
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <!-- Stats Cards -->
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 border-l-4 border-yellow-500">
+                    <div
+                        class=" overflow-hidden shadow-sm sm:rounded-lg p-6 border-l-4 border-yellow-500 bg-yellow-500 bg-opacity-20">
                         <h3 class="text-gray-500 text-sm font-medium">Pending Queues</h3>
                         <p class="text-2xl font-bold">{{ stats.pending }}</p>
                     </div>
-                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 border-l-4 border-green-500">
+                    <div
+                        class="bg-green-500 bg-opacity-20 overflow-hidden shadow-sm sm:rounded-lg p-6 border-l-4 border-green-500">
                         <h3 class="text-gray-500 text-sm font-medium">Completed Queues</h3>
                         <p class="text-2xl font-bold">{{ stats.completed }}</p>
                     </div>
-                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 border-l-4 border-red-500">
+                    <div
+                        class="bg-red-500 bg-opacity-20 overflow-hidden shadow-sm sm:rounded-lg p-6 border-l-4 border-red-500">
                         <h3 class="text-gray-500 text-sm font-medium">Canceled Queues</h3>
                         <p class="text-2xl font-bold">{{ stats.canceled }}</p>
                     </div>
-                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 border-l-4 border-purple-500">
+                    <div
+                        class="bg-purple-500 bg-opacity-20 overflow-hidden shadow-sm sm:rounded-lg p-6 border-l-4 border-purple-500">
                         <h3 class="text-gray-500 text-sm font-medium">Total Queues</h3>
                         <p class="text-2xl font-bold">{{ stats.total }}</p>
                     </div>
@@ -279,7 +283,7 @@ const cancelQueue = async (queueId) => {
                             </tbody>
                         </table>
                         <div class="px-6 py-4 border-t border-gray-200">
-                            <Pagination :links="queues.links" @paginating="onPaginating" />
+                            <Pagination :links="queues.links" @paginating="onPaginating" :meta="queues" />
                         </div>
                     </div>
                 </div>
