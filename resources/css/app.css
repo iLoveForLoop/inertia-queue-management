@@ -6,3 +6,21 @@
     font-family: 'Poppins';
     src: url('/fonts/Poppins-Regular.ttf');
 }
+
+
+.notification-enter-active,
+.notification-leave-active {
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.notification-enter-from,
+.notification-leave-to {
+    opacity: 0;
+    transform: translateX(100%) scale(0.8);
+}
+
+.notification-enter-to,
+.notification-leave-from {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+}

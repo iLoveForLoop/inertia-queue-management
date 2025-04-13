@@ -7,6 +7,8 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
+import PopUp from '@/Components/PopUp.vue';
+import { watch, ref } from 'vue';
 
 defineProps({
     canResetPassword: {
@@ -28,16 +30,26 @@ const submit = () => {
         onFinish: () => form.reset('password'),
     });
 };
+
+const showError = ref(false)
+
+watch(
+    () => form.errors,
+    (newErrors) => {
+        // console.log('New error: ', form.errors.email)
+        showError.value = true
+        setTimeout(() => {
+            showError.value = false
+        }, 5000)
+    },
+    { deep: true }
+);
 </script>
 
 <template>
     <GuestLayout>
 
         <Head title="Log in" />
-
-        <div v-if="status" class="mb-4 text-sm font-medium text-green-600">
-            {{ status }}
-        </div>
 
         <!-- <ApplicationLogo class="w-1/2 h-auto" /> -->
 
@@ -46,13 +58,18 @@ const submit = () => {
         </div>
 
         <form @submit.prevent="submit">
+            <transition name="notification">
+                <PopUp v-if="showError" :message="form.errors.email" title="Error" />
+            </transition>
+
             <div>
                 <InputLabel for="email" value="Email" />
 
                 <TextInput id="email" type="email" class="mt-1 block w-full" v-model="form.email" required autofocus
                     autocomplete="username" />
 
-                <InputError class="mt-2" :message="form.errors.email" />
+                <!-- <InputError class="mt-2" :message="form.errors.email" /> -->
+
             </div>
 
             <div class="mt-4">
@@ -61,7 +78,7 @@ const submit = () => {
                 <TextInput id="password" type="password" class="mt-1 block w-full" v-model="form.password" required
                     autocomplete="current-password" />
 
-                <InputError class="mt-2" :message="form.errors.password" />
+                <!-- <InputError class="mt-2" :message="form.errors.password" /> -->
             </div>
 
 
@@ -92,3 +109,6 @@ const submit = () => {
         </form>
     </GuestLayout>
 </template>
+
+
+<style></style>

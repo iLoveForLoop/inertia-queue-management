@@ -17,9 +17,9 @@ import { Link } from '@inertiajs/vue3';
                 class="absolute inset-0 bg-gradient-to-r from-blue-300 to-blue-600 shadow-lg transform  skew-y-0 -rotate-6 rounded-3xl mx-1">
             </div>
 
-            <div class="relative px-20 py-[2.7em]  bg-white shadow-lg rounded-3xl p-5 mx-1">
+            <div class="relative px-20 py-[2.7em] max-w-lg min-w-lg bg-white shadow-lg rounded-3xl p-5 mx-1">
 
-                <div class="max-w-md mx-auto">
+                <div class="max-w-sm mx-auto">
                     <slot />
                 </div>
             </div>
