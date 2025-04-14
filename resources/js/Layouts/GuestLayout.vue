@@ -4,24 +4,28 @@ import { Link } from '@inertiajs/vue3';
 </script>
 
 <template>
-
-    <div class="min-h-screen bg-gray-200 flex flex-col justify-center ">
-        <div class="fixed inset-0 flex w-full h-1/6 justify-center md:justify-start">
-            <Link class="pt-10 md:ps-10" href="/">
-            <!-- <ApplicationLogo class="h-auto w-32 fill-current text-blue-600" /> -->
-            <h2 class="font-semibold text-xl text-indigo-600 leading-tight">MediQueue</h2>
+    <div class="min-h-screen bg-gradient-to-br from-teal-50 to-blue-50 flex flex-col justify-center">
+        <!-- Header / Logo Area -->
+        <div class="fixed inset-0 flex w-full h-16 justify-center md:justify-start">
+            <Link class="pt-6 md:ps-10" href="/">
+            <div class="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                    class="w-8 h-8 text-teal-600">
+                    <path
+                        d="M11.25 4.533A9.707 9.707 0 006 3a9.735 9.735 0 00-3.25.555.75.75 0 00-.5.707v14.25a.75.75 0 001 .707A8.237 8.237 0 016 18.75c1.995 0 3.823.707 5.25 1.886V4.533zM12.75 20.636A8.214 8.214 0 0118 18.75c.966 0 1.89.166 2.75.47a.75.75 0 001-.708V4.262a.75.75 0 00-.5-.707A9.735 9.735 0 0018 3a9.707 9.707 0 00-5.25 1.533v16.103z" />
+                </svg>
+                <h2 class="font-semibold text-xl text-teal-600 leading-tight ml-2">MediQueue</h2>
+            </div>
             </Link>
         </div>
-        <div class="relative py-3 sm:max-w-xl mx-auto">
+
+        <!-- Card Container -->
+        <div class="relative py-3 sm:max-w-md mx-auto w-full px-4">
             <div
-                class="absolute inset-0 bg-gradient-to-r from-blue-300 to-blue-600 shadow-lg transform  skew-y-0 -rotate-6 rounded-3xl mx-1">
+                class="absolute inset-0 bg-gradient-to-r from-teal-400 to-blue-500 shadow-lg transform -rotate-2 rounded-2xl mx-1">
             </div>
-
-            <div class="relative px-20 py-[2.7em] max-w-lg min-w-lg bg-white shadow-lg rounded-3xl p-5 mx-1">
-
-                <div class="max-w-sm mx-auto">
-                    <slot />
-                </div>
+            <div class="relative bg-white shadow-lg rounded-2xl px-8 py-10">
+                <slot />
             </div>
         </div>
     </div>

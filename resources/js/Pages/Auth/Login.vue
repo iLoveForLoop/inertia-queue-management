@@ -51,61 +51,63 @@ watch(
 
         <Head title="Log in" />
 
-        <!-- <ApplicationLogo class="w-1/2 h-auto" /> -->
-
-        <div class="w-full flex justify-center items-center mb-5">
-            <h1 class="text-2xl font-bold text-indigo-500 uppercase">Log in</h1>
+        <div class="w-full flex justify-center items-center mb-6">
+            <h1 class="text-2xl font-bold text-teal-600">Welcome Back</h1>
         </div>
 
+        <!-- Notification popup -->
+        <transition name="notification">
+            <PopUp v-if="showError" :message="form.errors.email" title="Error" :duration="3000" />
+        </transition>
+
+
         <form @submit.prevent="submit">
-            <transition name="notification">
-                <PopUp v-if="showError" :message="form.errors.email" title="Error" />
-            </transition>
-
-            <div>
-                <InputLabel for="email" value="Email" />
-
-                <TextInput id="email" type="email" class="mt-1 block w-full" v-model="form.email" required autofocus
-                    autocomplete="username" />
-
-                <!-- <InputError class="mt-2" :message="form.errors.email" /> -->
-
+            <!-- Email Field -->
+            <div class="mb-4">
+                <InputLabel for="email" value="Email" class="text-gray-700" />
+                <TextInput id="email" type="email"
+                    class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-teal-500 focus:ring focus:ring-teal-200 focus:ring-opacity-50"
+                    v-model="form.email" required autofocus autocomplete="username" />
             </div>
 
-            <div class="mt-4">
-                <InputLabel for="password" value="Password" />
-
-                <TextInput id="password" type="password" class="mt-1 block w-full" v-model="form.password" required
-                    autocomplete="current-password" />
-
-                <!-- <InputError class="mt-2" :message="form.errors.password" /> -->
+            <!-- Password Field -->
+            <div class="mb-4">
+                <InputLabel for="password" value="Password" class="text-gray-700" />
+                <TextInput id="password" type="password"
+                    class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-teal-500 focus:ring focus:ring-teal-200 focus:ring-opacity-50"
+                    v-model="form.password" required autocomplete="current-password" />
             </div>
 
+            <!-- Remember Me and Forgot Password (Side by Side) -->
+            <div class="mb-6 flex items-center justify-between">
+                <label class="flex items-center">
+                    <Checkbox name="remember" v-model:checked="form.remember"
+                        class="rounded border-gray-300 text-teal-600 shadow-sm focus:border-teal-500 focus:ring focus:ring-teal-200 focus:ring-opacity-50" />
+                    <span class="ms-2 text-sm text-gray-600">Remember me</span>
+                </label>
 
-            <!--  -->
-            <div class="flex flex-col">
-                <div class="mt-4">
-                    <label class="flex items-center">
-                        <Checkbox name="remember" v-model:checked="form.remember" />
-                        <span class="ms-2 text-sm text-gray-600">Remember me</span>
-                    </label>
+                <Link v-if="canResetPassword" :href="route('password.request')"
+                    class="text-sm text-teal-600 hover:text-teal-800 transition-colors duration-200">
+                Forgot password?
+                </Link>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="flex flex-col items-center">
+                <button type="submit"
+                    class="w-full py-3 bg-gradient-to-r from-teal-500 to-blue-500 text-white font-medium rounded-lg shadow-md hover:from-teal-600 hover:to-blue-600 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-opacity-50 transition-all duration-200"
+                    :class="{ 'opacity-75 cursor-not-allowed': form.processing }" :disabled="form.processing">
+                    <span v-if="form.processing" class="inline-block mr-2">
+                        <!-- Loading spinner icon could go here -->
+                    </span>
+                    Sign In
+                </button>
+
+                <div class="mt-6 text-center text-sm text-gray-600">
+                    Don't have an account?
+                    <Link href="/register" class="font-medium text-teal-600 hover:text-teal-500">Sign up</Link>
                 </div>
-
-                <div class="mt-4 flex flex-col items-center justify-center gap-4">
-
-
-                    <PrimaryButton class="w-full " :class="{ 'opacity-25': form.processing }"
-                        :disabled="form.processing">
-                        Log in
-                    </PrimaryButton>
-                    <Link v-if="canResetPassword" :href="route('password.request')"
-                        class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-                    Forgot your password?
-                    </Link>
-                </div>
             </div>
-
-
         </form>
     </GuestLayout>
 </template>

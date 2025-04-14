@@ -10,6 +10,15 @@ use Inertia\Inertia;
 
 
 Route::get('/', function () {
+
+    if(auth()->user()){
+        if(auth()->user()->hasRole('admin')) return redirect()->route('dashboard');
+        if(auth()->user()->hasRole('user')) return redirect()->route('user');
+    }
+
+
+
+
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
