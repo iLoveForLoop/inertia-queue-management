@@ -162,15 +162,11 @@ const cancelQueue = async (queueId, qnum) => {
     <Head title="Dashboard" />
 
     <AuthenticatedLayout>
-        <!-- <template #header>
-            <h2 class="font-semibold text-xl text-indigo-600 leading-tight">MediQueue</h2>
-        </template> -->
 
-        <!-- {{ console.log('Notif: ', notifType, notifMessage, 'Boolean: ', isNotif) }} -->
-        <transition name="notification">
+        <!-- <transition name="notification">
             <PopUp v-if="isNotif" class="z-80" :duration="3000" :type="notifType" :message="notifMessage"
                 :title="notifTitle" />
-        </transition>
+        </transition> -->
 
 
         <div class="py-6">

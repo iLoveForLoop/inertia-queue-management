@@ -16,8 +16,8 @@ const showingNavigationDropdown = ref(false);
 
 <template>
     <div>
-        <div class="min-h-screen bg-blue-100">
-            <nav class=" bg-blue-100">
+        <div class="min-h-screen bg-gradient-to-r from-teal-50 to-blue-100">
+            <nav class=" bg-gradient-to-r from-teal-50 to-blue-100">
                 <!-- Primary Navigation Menu -->
                 <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div class="flex h-16 justify-between">

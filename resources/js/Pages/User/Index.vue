@@ -74,7 +74,7 @@ usePoll(1000, {
 
 <template>
     <AuthenticatedLayout>
-        <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 py-10 px-4">
+        <div class="min-h-screen bg-gradient-to-r from-teal-50 to-blue-100 py-10 px-4">
             <div class="max-w-lg mx-auto">
                 <!-- Header with User Welcome -->
                 <div class="text-center mb-8">
@@ -153,7 +153,7 @@ usePoll(1000, {
                                     <span class="text-gray-500">Your Position: <span
                                             class="font-medium text-gray-700">{{ positionInQueue }}</span></span>
                                     <span class="text-gray-500">Queues Ahead: <span class="font-medium text-gray-700">{{
-                                            queuesAhead }}</span></span>
+                                        queuesAhead }}</span></span>
                                 </div>
                                 <div class="h-4 bg-gray-100 rounded-full overflow-hidden">
                                     <div class="h-full bg-blue-500 rounded-full transition-all duration-500"
