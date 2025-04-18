@@ -43,6 +43,9 @@ Route::get('/user', [UserController::class, 'index'])->middleware(['auth'])->nam
 Route::post('/user/queue/request', [UserController::class, 'requestQueue'])
     ->middleware(['auth', 'verified'])
     ->name('user.queue.request');
+Route::patch('/user/queue/{queue}/cancel', [UserController::class, 'cancel'])
+    ->middleware(['auth', 'verified'])
+    ->name('user.queue.cancel');
 
 
 //admin

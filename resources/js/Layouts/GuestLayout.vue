@@ -20,11 +20,21 @@ import { Link } from '@inertiajs/vue3';
         </div>
 
         <!-- Card Container -->
-        <div class="relative py-3 sm:max-w-md mx-auto w-full px-4">
+        <div class="relative py-3 sm:max-w-md mx-auto w-full px-4 bg-gradient-to-br from-teal-50 to-blue-50 ">
+            <div
+                class="absolute -top-8 -left-8 w-64 h-64 bg-teal-100 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob">
+            </div>
+            <div
+                class="absolute -bottom-8 -right-8 w-64 h-64 bg-blue-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000">
+            </div>
+            <div
+                class="absolute top-1/2 left-1/2 w-64 h-64 bg-teal-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000">
+            </div>
             <div
                 class="absolute inset-0 bg-gradient-to-r from-teal-400 to-blue-500 shadow-lg transform -rotate-2 rounded-2xl mx-1">
             </div>
             <div class="relative bg-white shadow-lg rounded-2xl px-8 py-10">
+
                 <slot />
             </div>
         </div>

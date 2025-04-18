@@ -1,11 +1,14 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, router } from '@inertiajs/vue3';
-import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
+import { ref, computed, watch, onMounted, onUnmounted, inject } from 'vue';
 import { debounce } from 'lodash';
 import Pagination from '@/Components/Pagination.vue';
 import PopUp from '@/Components/PopUp.vue';
 import { usePage } from '@inertiajs/vue3';
+import { usePollingStore } from '@/store/polling';
+
+const pollingStore = usePollingStore()
 
 const props = defineProps({
     queues: Object,
@@ -24,6 +27,8 @@ const search = ref(props.filters.search || '');
 const statusFilter = ref(props.filters.status || 'all');
 const isPollingActive = ref(true);
 const pollingInterval = ref(null);
+
+
 
 // Computed properties
 const nextQueueNumber = computed(() => {
@@ -68,6 +73,20 @@ const resumePolling = () => {
 };
 
 // Watchers
+
+
+watch(() => pollingStore.isPaused, (paused) => {
+    console.log('WATCH WORKING: ', paused)
+    if (paused) {
+        console.log('CHILD PAUSING: ', paused)
+        pausePolling()
+    } else {
+        console.log('CHILD PAUSING: ', paused)
+        resumePolling()
+
+    }
+})
+
 watch(search, debounce((value) => {
     pausePolling();
     router.get(route('dashboard'), { search: value, status: statusFilter.value }, {
@@ -163,10 +182,10 @@ const cancelQueue = async (queueId, qnum) => {
 
     <AuthenticatedLayout>
 
-        <!-- <transition name="notification">
+        <transition name="notification">
             <PopUp v-if="isNotif" class="z-80" :duration="3000" :type="notifType" :message="notifMessage"
                 :title="notifTitle" />
-        </transition> -->
+        </transition>
 
 
         <div class="py-6">

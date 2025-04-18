@@ -1,7 +1,12 @@
 <script setup>
-import { useForm, usePoll } from '@inertiajs/vue3';
-import { computed } from 'vue';
+import { useForm, usePoll, router } from '@inertiajs/vue3';
+import { computed, onMounted, onBeforeUnmount, ref, inject, watch } from 'vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { usePollingStore } from '@/store/polling';
+import PopUp from '@/Components/PopUp.vue';
+
+
+
 
 
 const props = defineProps({
@@ -25,13 +30,40 @@ const props = defineProps({
         type: Boolean,
         default: false
     }
+})
+
+//NOTIF DATA
+const notifMessage = ref('')
+const notifType = ref('')
+const notifTitle = ref('')
+const isNotif = ref(false);
+
+const form = useForm()
+const pollingStore = usePollingStore()
+
+const { stop, start } = usePoll(1000, {
+    only: ['queuesAhead', 'waitTime', 'currentlyServing', 'isCurrentlyServing', 'user'],
 });
 
-const form = useForm();
 
-const logout = () => {
-    form.post(route('logout'));
-};
+
+watch(() => pollingStore.isPaused, (paused) => {
+    console.log('WATCH WORKING: ', paused)
+    if (paused) {
+        console.log('CHILD PAUSING: ', paused)
+        stop()
+        setTimeout(() => { }, 3000)
+    } else {
+        console.log('CHILD PAUSING: ', paused)
+        start()
+    }
+})
+
+
+
+
+
+
 
 const formattedWaitTime = computed(() => {
     if (props.isCurrentlyServing) return 'Now serving!';
@@ -64,15 +96,48 @@ const progressWidth = computed(() => {
 });
 
 const requestNewQueue = () => {
-    form.post(route('user.queue.request'));
+    form.post(route('user.queue.request'), {
+        onSuccess: () => {
+            notifMessage.value = "You requested a new queue"
+            notifType.value = "info"
+            notifTitle.value = ("Request")
+            isNotif.value = true
+        },
+        onFinish: () => {
+            setTimeout(() => {
+                isNotif.value = false
+            }, 3000)
+        }
+    });
 }
 
-usePoll(1000, {
 
-})
+
+const cancelQueue = () => {
+    router.patch(route('user.queue.cancel', props.user.queue.id), {}, {
+        preserveScroll: true,
+        onSuccess: () => {
+            notifMessage.value = "You cancelled your queue"
+            notifType.value = "error"
+            notifTitle.value = ("Cancelled")
+            isNotif.value = true
+        },
+        onFinish: () => {
+            setTimeout(() => {
+                isNotif.value = false
+            }, 3000)
+        }
+    })
+}
+
+
 </script>
 
 <template>
+    <transition name="notification">
+        <PopUp v-if="isNotif" class="z-80" :duration="3000" :type="notifType" :message="notifMessage"
+            :title="notifTitle" />
+    </transition>
     <AuthenticatedLayout>
         <div class="min-h-screen bg-gradient-to-r from-teal-50 to-blue-100 py-10 px-4">
             <div class="max-w-lg mx-auto">

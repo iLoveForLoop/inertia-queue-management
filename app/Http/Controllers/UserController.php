@@ -93,4 +93,11 @@ public function requestQueue()
     // Redirect back to the index which will show the new queue
     return redirect()->route('user', compact('user'));
 }
+
+public function cancel(Queue $queue){
+
+    $queue->update(['status' => 'canceled']);
+    return redirect()->back()->with('error', 'You cancelled your queue');
+
+}
 }

@@ -1,15 +1,33 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, provide } from 'vue'
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
-import Dropdown from '@/Components/Dropdown.vue';
-import DropdownLink from '@/Components/DropdownLink.vue';
-import NavLink from '@/Components/NavLink.vue';
-import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
-import { Link } from '@inertiajs/vue3';
+import Dropdown from '@/Components/Dropdown.vue'
+import DropdownLink from '@/Components/DropdownLink.vue'
+import NavLink from '@/Components/NavLink.vue'
+import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue'
+import { Link } from '@inertiajs/vue3'
 import { usePage } from '@inertiajs/vue3'
+import { usePollingStore } from '@/store/polling'
+
 
 const page = usePage()
 const roles = page.props.auth.roles
+
+const pollingStore = usePollingStore()
+
+
+const pausePolling = () => {
+
+    pollingStore.pause()
+    console.log('PAUSING: ', pollingStore.isPaused)
+}
+const resumePolling = () => {
+
+    pollingStore.resume()
+    console.log('RESUMING: ', pollingStore.isPaused)
+}
+
+
 
 const showingNavigationDropdown = ref(false);
 </script>
@@ -25,20 +43,28 @@ const showingNavigationDropdown = ref(false);
                             <!-- Logo -->
                             <div class="flex shrink-0 items-center">
                                 <Link :href="route('dashboard')">
-                                <!-- <ApplicationLogo
-                                        class="block h-9 w-auto fill-current text-gray-800"
-                                    /> -->
-                                <h2 class="font-semibold text-xl text-indigo-600 leading-tight">MediQueue</h2>
+                                <div class="flex items-center">
+                                    <div class="flex items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                            class="w-8 h-8 text-teal-600 mr-2">
+                                            <path
+                                                d="M11.25 4.533A9.707 9.707 0 006 3a9.735 9.735 0 00-3.25.555.75.75 0 00-.5.707v14.25a.75.75 0 001 .707A8.237 8.237 0 016 18.75c1.995 0 3.823.707 5.25 1.886V4.533zM12.75 20.636A8.214 8.214 0 0118 18.75c.966 0 1.89.166 2.75.47a.75.75 0 001-.708V4.262a.75.75 0 00-.5-.707A9.735 9.735 0 0018 3a9.707 9.707 0 00-5.25 1.533v16.103z" />
+                                        </svg>
+                                        <h1 class="text-2xl font-bold text-teal-600 animate-fade-in">MediQueue</h1>
+                                    </div>
+                                </div>
                                 </Link>
                             </div>
 
+
+
                             <!-- Navigation Links -->
 
-                            <div v-if="roles.includes('admin')" class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                            <!-- <div v-if="roles.includes('admin')" class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                 <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
                                     Dashboard
                                 </NavLink>
-                            </div>
+                            </div> -->
                         </div>
 
                         <div class="hidden sm:ms-6 sm:flex sm:items-center">
@@ -48,7 +74,7 @@ const showingNavigationDropdown = ref(false);
                                     <template #trigger>
                                         <span class="inline-flex rounded-md">
                                             <button type="button"
-                                                class="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none">
+                                                class="inline-flex items-center rounded-full border border-transparent bg-gradient-to-r from-teal-200 to-blue-200 px-3 py-2 text-sm font-medium leading-4 text-black transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none ">
                                                 {{ $page.props.auth.user.name }}
 
                                                 <svg class="-me-0.5 ms-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg"
@@ -65,7 +91,8 @@ const showingNavigationDropdown = ref(false);
                                         <DropdownLink :href="route('profile.edit')">
                                             Profile
                                         </DropdownLink>
-                                        <DropdownLink :href="route('logout')" method="post" as="button">
+                                        <DropdownLink :href="route('logout')" method="post" as="button"
+                                            @mouseover="pausePolling" @mouseleave="resumePolling">
                                             Log Out
                                         </DropdownLink>
                                     </template>
