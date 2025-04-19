@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Queue;
+use App\Notifications\QueueNotif;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -79,5 +80,13 @@ class AdminQueueController extends Controller
     {
         $queue->update(['status' => 'canceled']);
         return redirect()->back()->with('error', 'Queue canceled.');
+    }
+
+    public function sendQueueServing(Queue $queue=null){
+
+        // dd('here');
+
+        $queue->load('user');
+        $queue->user->notify(new QueueNotif($queue));
     }
 }

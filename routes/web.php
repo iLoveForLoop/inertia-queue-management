@@ -53,6 +53,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [AdminQueueController::class, 'index'])->name('dashboard');
     Route::patch('/admin/queue/{queue}/complete', [AdminQueueController::class, 'complete'])->name('admin.queue.complete');
     Route::patch('/admin/queue/{queue}/cancel', [AdminQueueController::class, 'cancel'])->name('admin.queue.cancel');
+    Route::post('/admin/queue/{queue}/serving',[AdminQueueController::class, 'sendQueueServing'])->name('queue.serving');
 });
 
 

@@ -27,12 +27,14 @@ const search = ref(props.filters.search || '');
 const statusFilter = ref(props.filters.status || 'all');
 const isPollingActive = ref(true);
 const pollingInterval = ref(null);
+const currentlyServingQueueId = ref(null)
 
 
 
 // Computed properties
 const nextQueueNumber = computed(() => {
     const pendingQueues = props.queues?.data?.filter(q => q.status === 'pending') || [];
+    currentlyServingQueueId.value = pendingQueues.length ? Math.min(...pendingQueues.map(q => q.id)) : null;
     return pendingQueues.length ? Math.min(...pendingQueues.map(q => q.queue_number)) : null;
 });
 
@@ -74,6 +76,10 @@ const resumePolling = () => {
 
 // Watchers
 
+watch(() => nextQueueNumber.value, (newData) => {
+    console.log('sending');
+    router.post(route('queue.serving', currentlyServingQueueId.value))
+})
 
 watch(() => pollingStore.isPaused, (paused) => {
     console.log('WATCH WORKING: ', paused)
