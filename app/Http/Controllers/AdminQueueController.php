@@ -33,7 +33,7 @@ class AdminQueueController extends Controller
             $query->where('status', $request->status);
         }
 
-        // Get the last completed queue number to determine current serving queue
+
         $lastCompleted = Queue::where('status', 'completed')
             ->orderBy('updated_at', 'desc')
             ->value('queue_number') ?? 0;

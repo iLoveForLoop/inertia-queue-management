@@ -86,13 +86,13 @@ const positionInQueue = computed(() => {
 });
 
 const progressWidth = computed(() => {
-    if (!props.user.queue || props.user.queue.status !== 'pending') return '5%'; // not in queue
-    if (props.isCurrentlyServing) return '100%'; // being served now
+    if (!props.user.queue || props.user.queue.status !== 'pending') return '5%';
+    if (props.isCurrentlyServing) return '100%';
 
-    const currentPosition = props.queuesAhead + 1; // e.g., if 2 ahead of you, you're 3rd
-    const percentage = (1 / currentPosition) * 100; // closer to 1st = higher %
+    const currentPosition = props.queuesAhead + 1;
+    const percentage = (1 / currentPosition) * 100;
 
-    return `${Math.max(5, percentage.toFixed(2))}%`; // minimum visible bar width
+    return `${Math.max(5, percentage.toFixed(2))}%`;
 });
 
 const requestNewQueue = () => {
@@ -140,7 +140,7 @@ const cancelQueue = () => {
     <AuthenticatedLayout>
         <div class="min-h-screen bg-gradient-to-r from-teal-50 to-blue-100 py-10 px-4">
             <div class="max-w-lg mx-auto">
-                <!-- Header with User Welcome -->
+                <!-- Welcome -->
                 <div class="text-center mb-8">
                     <h1 class="text-3xl font-bold text-gray-800">Hello, {{ user.name }}</h1>
                     <p class="text-gray-500 mt-2">Track your queue status below</p>
@@ -148,7 +148,7 @@ const cancelQueue = () => {
 
                 <!-- Main Queue Card -->
                 <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-8">
-                    <!-- Queue Number Hero Section -->
+
                     <div v-if="user.queue" class="bg-blue-500 px-6 py-8 text-center">
                         <p class="text-blue-100 text-sm font-medium uppercase tracking-wider mb-1">Your Queue</p>
                         <div class="flex items-center justify-center">
@@ -176,7 +176,7 @@ const cancelQueue = () => {
                         </div>
                     </div>
 
-                    <!-- Empty State Hero Section -->
+                    <!-- Empty State-->
                     <div v-else class="bg-gray-100 px-6 py-8 text-center">
                         <div class="bg-white rounded-full p-6 shadow-lg inline-flex items-center justify-center">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-400" fill="none"

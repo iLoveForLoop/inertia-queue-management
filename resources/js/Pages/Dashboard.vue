@@ -48,13 +48,13 @@ const refreshData = () => {
         preserveState: true,
         preserveScroll: true,
         onFinish: () => {
-            // Optional: Add any post-refresh logic
+
         }
     });
 };
 
 const startPolling = () => {
-    stopPolling(); // Clear any existing interval
+    stopPolling();
     pollingInterval.value = setInterval(refreshData, 1000);
 };
 
@@ -119,11 +119,11 @@ const onPaginating = () => {
     isPaginating.value = true;
     pausePolling();
 
-    // Resume after navigation completes
+
     const unwatch = watch(() => props.queues, () => {
         isPaginating.value = false;
         resumePolling();
-        unwatch(); // Clean up the watcher
+        unwatch();
     }, { deep: true });
 };
 
@@ -187,9 +187,6 @@ const cancelQueue = async (queueId, qnum) => {
 
 const isActionOpen = ref(false);
 
-const toggleEye = () => {
-    isActionOpen.value = !isActionOpen.value
-}
 </script>
 
 <template>
@@ -352,10 +349,10 @@ const toggleEye = () => {
                                             class="text-green-600 hover:text-green-900 mr-4">
                                             Complete
                                         </button>
-                                        <button v-if="queue.status === 'pending'" @click="cancelQueue(queue.id)"
+                                        <!-- <button v-if="queue.status === 'pending'" @click="cancelQueue(queue.id)"
                                             class="text-red-600 hover:text-red-900">
                                             Cancel
-                                        </button>
+                                        </button> -->
                                         <span v-else class="text-gray-400">No actions</span>
                                     </td>
                                     <td v-else
