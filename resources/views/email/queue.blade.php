@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Your Queue Number is Now Serving</title>
+    <title>Your Queue Status Update</title>
 </head>
 
 <body
@@ -53,50 +53,69 @@
                         </td>
                     </tr>
 
-                    <!-- Notification Box -->
+                    <!-- Notification Box with Dynamic Background Color -->
                     <tr>
                         <td style="padding: 0 0 30px 0;">
                             <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%"
-                                style="background: linear-gradient(to right, #14b8a6, #0369a1); border-radius: 8px; color: white;">
+                                style="@if ($queueItem->status == 'pending') background: linear-gradient(to right, #14b8a6, #0369a1);@elseif($queueItem->status == 'completed')background: linear-gradient(to right, #10b981, #059669);@elseif($queueItem->status == 'canceled')background: linear-gradient(to right, #ef4444, #b91c1c); @endif border-radius: 8px; color: white;">
                                 <tr>
                                     <td style="padding: 30px; text-align: center;">
                                         <p style="margin: 0; font-size: 16px; margin-bottom: 15px;">Your Queue Number
                                         </p>
                                         <p style="margin: 0; font-size: 36px; font-weight: bold; margin-bottom: 15px;">
                                             {{ $queueItem->queue_number }}</p>
-                                        <p
-                                            style="margin: 0; font-size: 20px; font-weight: bold; background-color: #ffffff; color: #14b8a6; padding: 8px 16px; border-radius: 20px; display: inline-block;">
-                                            NOW SERVING</p>
+
+                                        @if ($queueItem->status == 'pending')
+                                            <p
+                                                style="margin: 0; font-size: 20px; font-weight: bold; background-color: #ffffff; color: #14b8a6; padding: 8px 16px; border-radius: 20px; display: inline-block;">
+                                                NOW SERVING</p>
+                                        @elseif($queueItem->status == 'completed')
+                                            <p
+                                                style="margin: 0; font-size: 20px; font-weight: bold; background-color: #ffffff; color: #10b981; padding: 8px 16px; border-radius: 20px; display: inline-block;">
+                                                COMPLETED</p>
+                                        @elseif($queueItem->status == 'canceled')
+                                            <p
+                                                style="margin: 0; font-size: 20px; font-weight: bold; background-color: #ffffff; color: #dc2626; padding: 8px 16px; border-radius: 20px; display: inline-block;">
+                                                CANCELED</p>
+                                        @endif
                                     </td>
                                 </tr>
                             </table>
                         </td>
                     </tr>
 
-                    <!-- Instructions -->
+                    <!-- Dynamic Instructions based on status -->
                     <tr>
                         <td style="padding-bottom: 30px; line-height: 1.5; color: #4b5563;">
-                            <p style="margin: 0 0 15px 0;">Please proceed to the pharmacy counter. If you are not
-                                present when your number is called, your queue position will be automatically cancelled.
-                            </p>
+                            @if ($queueItem->status == 'pending')
+                                <p style="margin: 0 0 15px 0;">Please proceed to the pharmacy counter. If you are not
+                                    present when your number is called, your queue position will be automatically
+                                    cancelled.
+                                </p>
+                            @elseif($queueItem->status == 'completed')
+                                <p style="margin: 0 0 15px 0;">Your pharmacy transaction has been successfully
+                                    completed. Thank you for using our queue management system.</p>
+                                <p style="margin: 0 0 15px 0;">Transaction Details:</p>
+                                <ul style="margin: 0 0 15px 0; padding-left: 20px;">
+                                    <li>Date: {{ date('F d, Y', strtotime($queueItem->updated_at)) }}</li>
+                                    <li>Time: {{ date('h:i A', strtotime($queueItem->updated_at)) }}</li>
+                                    <li>Service: Pharmacy</li>
+                                </ul>
+                                <p style="margin: 0 0 15px 0;">We hope you found our service efficient and helpful. If
+                                    you have any feedback or questions, please don't hesitate to contact our customer
+                                    service team.</p>
+                            @elseif($queueItem->status == 'canceled')
+                                <p style="margin: 0 0 15px 0;">Your queue has been canceled. This may be because:</p>
+                                <ul style="margin: 0 0 15px 0; padding-left: 20px;">
+                                    <li>You were not present when your number was called</li>
+                                    <li>You requested cancellation</li>
+                                    <li>The service was temporarily unavailable</li>
+                                </ul>
+                                <p style="margin: 0 0 15px 0;">If you still need pharmacy services, please take a new
+                                    queue number at our service counter or through the MediQueue app.</p>
+                            @endif
                         </td>
                     </tr>
-
-                    <!-- CTA Button -->
-                    {{-- <tr>
-                        <td style="padding-bottom: 30px;">
-                            <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center">
-                                <tr>
-                                    <td
-                                        style="border-radius: 6px; background: linear-gradient(to right, #14b8a6, #0369a1); text-align: center;">
-                                        <a href="{{ url('/my-queue') }}"
-                                            style="background: linear-gradient(to right, #14b8a6, #0369a1); border: 15px solid transparent; border-left-width: 30px; border-right-width: 30px; border-radius: 6px; color: #ffffff; display: inline-block; font-weight: bold; text-decoration: none;">View
-                                            My Queue</a>
-                                    </td>
-                                </tr>
-                            </table>
-                        </td>
-                    </tr> --}}
 
                     <!-- Signature -->
                     <tr>

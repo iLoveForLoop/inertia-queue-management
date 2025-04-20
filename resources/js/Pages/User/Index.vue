@@ -130,7 +130,6 @@ const cancelQueue = () => {
     })
 }
 
-
 </script>
 
 <template>

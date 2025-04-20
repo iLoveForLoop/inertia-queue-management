@@ -129,7 +129,7 @@ defineProps({
                             </svg>
                         </div>
                         <h3 class="text-xl font-semibold text-gray-900 mb-2">Convenient Notifications</h3>
-                        <p class="text-gray-600">Receive real-time updates on your prescription status and queue
+                        <p class="text-gray-600">Receive real-time updates on your queue status and queue
                             position.</p>
                     </div>
                 </div>
@@ -204,103 +204,4 @@ defineProps({
     </div>
 </template>
 
-<style>
-@keyframes blob {
-    0% {
-        transform: translate(0px, 0px) scale(1);
-    }
-
-    33% {
-        transform: translate(30px, -50px) scale(1.1);
-    }
-
-    66% {
-        transform: translate(-20px, 20px) scale(0.9);
-    }
-
-    100% {
-        transform: translate(0px, 0px) scale(1);
-    }
-}
-
-@keyframes fade-in {
-    from {
-        opacity: 0;
-    }
-
-    to {
-        opacity: 1;
-    }
-}
-
-@keyframes slide-up {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes float {
-    0% {
-        transform: translateY(0px);
-    }
-
-    50% {
-        transform: translateY(-10px);
-    }
-
-    100% {
-        transform: translateY(0px);
-    }
-}
-
-@keyframes pulse {
-    0% {
-        transform: scale(1);
-    }
-
-    50% {
-        transform: scale(1.05);
-    }
-
-    100% {
-        transform: scale(1);
-    }
-}
-
-.animate-blob {
-    animation: blob 7s infinite;
-}
-
-.animation-delay-2000 {
-    animation-delay: 2s;
-}
-
-.animation-delay-4000 {
-    animation-delay: 4s;
-}
-
-.animate-fade-in {
-    animation: fade-in 1s ease-out forwards;
-}
-
-.animate-slide-up {
-    animation: slide-up 0.8s ease-out forwards;
-    opacity: 0;
-    animation-delay: 0.3s;
-}
-
-.animate-float {
-    animation: float 4s ease-in-out infinite;
-    animation-delay: 0.8s;
-}
-
-.animate-pulse {
-    animation: pulse 2s infinite;
-}
-</style>
+<style></style>

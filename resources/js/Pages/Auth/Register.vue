@@ -40,6 +40,9 @@ watch(() => form.errors, (newError) => {
 
 <template>
     <GuestLayout>
+        <transition name="notification">
+            <PopUp v-if="showError" :message="errorMessage" title="Error" :duration="3000" />
+        </transition>
 
         <Head title="Register" />
 
@@ -48,7 +51,7 @@ watch(() => form.errors, (newError) => {
         </div>
 
         <!-- Notification popup -->
-        <transition name="notification">
+        <!-- <transition name="notification">
             <div v-if="showError" class="bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded-md">
                 <div class="flex">
                     <div class="flex-shrink-0">
@@ -64,7 +67,7 @@ watch(() => form.errors, (newError) => {
                     </div>
                 </div>
             </div>
-        </transition>
+        </transition> -->
 
         <form @submit.prevent="submit">
             <!-- Name Field -->

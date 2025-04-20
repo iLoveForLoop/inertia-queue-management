@@ -2,22 +2,25 @@
 
 namespace App\Notifications;
 
+use App\Models\Queue;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Markdown;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class QueueNotif extends Notification
+class QueueNotif extends Notification implements ShouldQueue
 {
     use Queueable;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct($queueItem)
+    protected $queueId;
+
+    public function __construct($queueId)
     {
-        $this->queueItem = $queueItem;
+        $this->queueId = $queueId;
     }
 
     /**
@@ -35,10 +38,12 @@ class QueueNotif extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
+        $queueItem = Queue::find($this->queueId);
+        $queueItem->load('user');
         return (new MailMessage)
         ->subject('Mediqueue Notification')
             ->view('email.queue', [
-                'queueItem' => $this->queueItem
+                'queueItem' => $queueItem
             ]);
     }
 

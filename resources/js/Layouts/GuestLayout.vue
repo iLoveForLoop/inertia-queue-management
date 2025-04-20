@@ -32,8 +32,9 @@ import { Link } from '@inertiajs/vue3';
             </div>
             <div
                 class="absolute inset-0 bg-gradient-to-r from-teal-400 to-blue-500 shadow-lg transform -rotate-2 rounded-2xl mx-1">
+
             </div>
-            <div class="relative bg-white shadow-lg rounded-2xl px-8 py-10">
+            <div class="relative bg-white shadow-lg rounded-2xl px-8 py-10 animate-slide-up-2">
 
                 <slot />
             </div>

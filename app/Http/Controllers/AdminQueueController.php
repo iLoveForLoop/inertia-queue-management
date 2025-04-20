@@ -72,13 +72,19 @@ class AdminQueueController extends Controller
 
     public function complete(Queue $queue)
     {
+
         $queue->update(['status' => 'completed']);
+        $queue->load('user');
+        $queue->user->notify(new QueueNotif($queue->id));
         return redirect()->back()->with('success', 'Queue marked as completed.');
     }
 
     public function cancel(Queue $queue)
     {
+
         $queue->update(['status' => 'canceled']);
+        $queue->load('user');
+        $queue->user->notify(new QueueNotif($queue->id));
         return redirect()->back()->with('error', 'Queue canceled.');
     }
 
@@ -87,6 +93,6 @@ class AdminQueueController extends Controller
         // dd('here');
 
         $queue->load('user');
-        $queue->user->notify(new QueueNotif($queue));
+        $queue->user->notify(new QueueNotif($queue->id));
     }
 }
