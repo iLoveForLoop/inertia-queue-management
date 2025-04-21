@@ -39,14 +39,14 @@ class RegisteredUserController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        // if(!$request->isVerified){
-        //     $verificationCode = rand(100000, 999999);
+        if(!$request->isVerified){
+            $verificationCode = rand(100000, 999999);
 
-        //     Notification::route('mail', $request->email)
-        //     ->notify(new CodeNotification($verificationCode));
+            Notification::route('mail', $request->email)
+            ->notify(new CodeNotification($verificationCode));
 
-        //     return back()->with('info', (string) $verificationCode);
-        // }
+            return back()->with('info', (string) $verificationCode);
+        }
 
         $user = User::create([
             'name' => $request->name,
