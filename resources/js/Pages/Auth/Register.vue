@@ -6,17 +6,25 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import PopUp from '@/Components/PopUp.vue';
+import VerifyEmail from '@/Components/VerifyEmail.vue';
 import { ref, watch } from 'vue';
+import { usePage } from '@inertiajs/vue3';
+
+const page = usePage()
 
 const form = useForm({
     name: '',
     email: '',
     password: '',
     password_confirmation: '',
+    isVerified: false,
+    code: ''
 });
 
 const showError = ref(false)
 const errorMessage = ref('')
+
+const isVerifying = ref(false)
 
 const submit = () => {
     form.post(route('register'), {
@@ -25,6 +33,15 @@ const submit = () => {
 };
 
 watch(() => form.errors, (newError) => {
+
+    if (page.props?.flash?.info) {
+        console.log(page.props.flash.info)
+        isVerifying.value = true
+        form.code = page.props.flash.info
+        return
+
+
+    }
 
     if (newError.password) errorMessage.value = newError.password
     if (newError.name) errorMessage.value = newError.name
@@ -35,14 +52,30 @@ watch(() => form.errors, (newError) => {
     setTimeout(() => {
         showError.value = false
     }, 3000)
+
+
+
 })
+
+const doneVerification = () => {
+    isVerifying.value = false
+    form.isVerified = true
+    submit();
+}
 </script>
 
 <template>
+    <transition name="notification">
+        <PopUp v-if="showError" :message="errorMessage" title="Error" :duration="3000" />
+    </transition>
+    <div v-if="isVerifying"
+        class="fixed inset-0 w-full h-full bg-black bg-opacity-30 flex items-center justify-center z-30">
+        <VerifyEmail :email="form.email" :code="form.code" @submit="doneVerification" @resend="submit()" />
+    </div>
     <GuestLayout>
-        <transition name="notification">
-            <PopUp v-if="showError" :message="errorMessage" title="Error" :duration="3000" />
-        </transition>
+
+
+
 
         <Head title="Register" />
 

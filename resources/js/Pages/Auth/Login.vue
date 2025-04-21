@@ -47,6 +47,9 @@ watch(
 </script>
 
 <template>
+    <transition name="notification">
+        <PopUp v-if="showError" :message="form.errors.email" title="Error" :duration="3000" />
+    </transition>
     <GuestLayout>
 
         <Head title="Log in" />
@@ -56,9 +59,7 @@ watch(
         </div>
 
         <!-- Notification popup -->
-        <transition name="notification">
-            <PopUp v-if="showError" :message="form.errors.email" title="Error" :duration="3000" />
-        </transition>
+
 
 
         <form @submit.prevent="submit">
