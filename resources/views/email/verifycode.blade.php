@@ -19,11 +19,11 @@
                 <table border="0" cellpadding="0" cellspacing="0" width="100%">
                     <tr>
                         <td style="text-align: center;">
-                            <div
+                            {{-- <div
                                 style="display: inline-block; background-color: rgba(255, 255, 255, 0.2); border-radius: 50%; width: 70px; height: 70px; line-height: 70px;">
-                                <!-- Simple M icon for Mediqueue -->
+
                                 <span style="color: #ffffff; font-size: 40px; font-weight: bold;">M</span>
-                            </div>
+                            </div> --}}
                         </td>
                     </tr>
                     <tr>
